@@ -74,7 +74,8 @@
 //   ...
 //   TRAPFRAME (p->tf, used by the trampoline)
 //   TRAMPOLINE (the same page as in the kernel)
-#define TRAPFRAME (TRAMPOLINE - PGSIZE)
+#define TRAPFRAME(n) (TRAMPOLINE - ((n) + 1) * 2 * PGSIZE)
+#define USTACK(n) (TRAMPOLINE - NTHREAD * 2 * PGSIZE - ((n) + 1) * 2 * PGSIZE)
 
 // For buddy system usage
 #define BUDDY_MAX_ORDER (10UL)

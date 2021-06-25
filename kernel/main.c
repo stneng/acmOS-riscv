@@ -5,10 +5,11 @@
 #include <defs.h>
 #include <riscv.h>
 
-#include "common/lock.h"
-#include "common/printk.h"
-#include "common/uart.h"
-#include "memory/mm.h"
+#include "lock.h"
+#include "printk.h"
+#include "uart.h"
+#include "mm.h"
+#include "process.h"
 
 volatile static int started = 0;
 
@@ -27,11 +28,15 @@ void main(){
         kern_page_test();
         mm_init();
         pt_init();
-        suspend();
+        trap_init_vec();
+        sched_init();
+        proc_init();
+
         sync_synchronize();
         started = 1;
     } else {
         while(started == 0);
         sync_synchronize();
     }
+    sched_start();
 }

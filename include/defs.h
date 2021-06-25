@@ -15,6 +15,12 @@ typedef unsigned short uint16;
 typedef unsigned int uint32;
 typedef unsigned long uint64;
 
+
+typedef long long sint64;
+typedef int sint32;
+typedef short sint16;
+typedef signed char sint8;
+
 typedef uint64 pde_t;
 
 typedef uint64 paddr_t;
@@ -28,6 +34,7 @@ typedef char bool;
 #define NULL 0
 // some constants: defined in params.h
 #define NPROC 10  // maximum number of processes
+#define NTHREAD 5  // maximum number of thread per processes
 #define NCPU 8  // maximum number of CPUs
 #define NOFILE 16  // open files per process
 #define NFILE 100  // open files per system
