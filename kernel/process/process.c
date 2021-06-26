@@ -48,7 +48,9 @@ static uint64 load_binary(pagetable_t target_page_table, const char *bin) {
             for (int offset = 0; offset < seg_map_sz; offset += PGSIZE) {
                 void *tmp = mm_kalloc();
                 memset(tmp, 0, PGSIZE);
-                memcpy(tmp, (void *) ((uint64) bin + elf->p_headers[i].p_offset + offset), seg_sz);
+                uint64 sz = PGSIZE;
+                if (seg_map_sz - offset < PGSIZE) sz = seg_map_sz - offset;
+                memcpy(tmp, (void *) ((uint64) bin + elf->p_headers[i].p_offset + offset), sz);
                 int perm = PTE_U;
                 if (elf->p_headers[i].p_flags & 0x1) perm |= PTE_X;
                 if (elf->p_headers[i].p_flags & 0x2) perm |= PTE_W;
@@ -102,7 +104,7 @@ process_t *alloc_proc(const char *bin, thread_t **thr) {
     list_add(&t->process_list_thread_node, &p->thread_list);
     p->process_state = IDLE;
     p->pid = ++_pid;
-    t->thread_state = IDLE;
+    t->thread_state = RUNNABLE;
     t->tid = ++_tid;
     t->kth = j - i * NTHREAD;
     t->fa = p;
@@ -114,7 +116,6 @@ process_t *alloc_proc(const char *bin, thread_t **thr) {
     t->context.ra = (uint64) usertrapret;
     t->context.sp = t->kernel_stack_va + PGSIZE;
     t->trapframe->epc = load_binary(p->pagetable, bin);
-    t->thread_state = RUNNABLE;
     *thr = t;
     return p;
 }
